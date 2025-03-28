@@ -1,6 +1,33 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuizContext from '../contexts/QuizContext';
+import {
+    Container,
+    Paper,
+    Typography,
+    Button,
+    Grid,
+    Box,
+    Alert,
+    Card,
+    CardContent,
+    CardHeader,
+    CircularProgress,
+    Divider,
+    Chip,
+    Stack,
+    IconButton
+} from '@mui/material';
+import TimerIcon from '@mui/icons-material/Timer';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import InfoIcon from '@mui/icons-material/Info';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const QuizRunner = () => {
     const navigate = useNavigate();
@@ -173,223 +200,283 @@ const QuizRunner = () => {
 
     if (isLoading) {
         return (
-            <div className="container">
-                <div className="card text-center p-5">
-                    <h2>Loading Quiz...</h2>
-                    <p>Please wait while we prepare your questions.</p>
-                </div>
-            </div>
+            <Container maxWidth="md" sx={{ py: 4 }}>
+                <Paper elevation={3} sx={{ p: 5, textAlign: 'center' }}>
+                    <Typography variant="h4" gutterBottom>Loading Quiz...</Typography>
+                    <CircularProgress sx={{ my: 3 }} />
+                    <Typography>Please wait while we prepare your questions.</Typography>
+                </Paper>
+            </Container>
         );
     }
 
     if (error) {
         return (
-            <div className="container">
-                <div className="card text-center p-5">
-                    <div className="alert alert-danger">
-                        <h3>Error Loading Quiz</h3>
-                        <p>{error}</p>
-                        <button className="btn btn-primary mt-3" onClick={() => navigate('/')}>
+            <Container maxWidth="md" sx={{ py: 4 }}>
+                <Paper elevation={3} sx={{ p: 5, textAlign: 'center' }}>
+                    <Alert severity="error" sx={{ mb: 3 }}>
+                        <Typography variant="h5" component="div" gutterBottom>
+                            Error Loading Quiz
+                        </Typography>
+                        <Typography>{error}</Typography>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ mt: 2 }}
+                            onClick={() => navigate('/')}
+                        >
                             Return to Setup
-                        </button>
-                    </div>
-                </div>
-            </div>
+                        </Button>
+                    </Alert>
+                </Paper>
+            </Container>
         );
     }
 
     if (!questions || questions.length === 0 || !currentQuestion) {
         return (
-            <div className="container">
-                <div className="card text-center p-5">
-                    <h3>No Questions Available</h3>
-                    <p>There seems to be an issue with the quiz questions.</p>
-                    <button className="btn btn-primary mt-3" onClick={() => navigate('/')}>
+            <Container maxWidth="md" sx={{ py: 4 }}>
+                <Paper elevation={3} sx={{ p: 5, textAlign: 'center' }}>
+                    <Typography variant="h5" gutterBottom>No Questions Available</Typography>
+                    <Typography paragraph>There seems to be an issue with the quiz questions.</Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => navigate('/')}
+                    >
                         Return to Setup
-                    </button>
-                </div>
-            </div>
+                    </Button>
+                </Paper>
+            </Container>
         );
     }
 
     return (
-        <div className="container">
-            <div className="card">
-                <div className="row mb-4">
-                    <div className="col-md-6">
-                        <h2>Question {currentQuestionIndex + 1} of {questions.length}</h2>
-                        {isBonus && <div className="alert alert-info">Bonus Round</div>}
-                        {isLightning && <div className="alert alert-warning">Lightning Round</div>}
-                    </div>
-                    <div className="col-md-6 text-right">
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Paper elevation={3} sx={{ p: 3 }}>
+                <Grid container spacing={2} sx={{ mb: 3 }}>
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h5" component="h2">
+                            Question {currentQuestionIndex + 1} of {questions.length}
+                        </Typography>
+                        {isBonus && <Chip color="info" label="Bonus Round" sx={{ mt: 1 }} />}
+                        {isLightning && <Chip color="warning" label="Lightning Round" sx={{ mt: 1 }} />}
+                    </Grid>
+                    <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
                         {(isBonus || isBonusQuestion) && eligibleTeam && (
-                            <div className="alert alert-info">
+                            <Alert severity="info" sx={{ display: 'inline-flex' }}>
                                 Bonus Team: {eligibleTeam.name}
-                            </div>
+                            </Alert>
                         )}
-                    </div>
-                </div>
+                    </Grid>
+                </Grid>
 
-                <div className="question card">
-                    <h3>{currentQuestion.text}</h3>
-                    {showAnswer && (
-                        <div className="answer alert alert-success mt-3">
-                            <strong>Answer:</strong> {currentQuestion.answer}
-                        </div>
-                    )}
-                </div>
+                <Card variant="outlined" sx={{ mb: 3, p: 2 }}>
+                    <CardContent>
+                        <Typography variant="h4" component="h3" align="center" gutterBottom>
+                            {currentQuestion.text}
+                        </Typography>
+                        {showAnswer && (
+                            <Alert severity="success" sx={{ mt: 2 }}>
+                                <Typography variant="body1">
+                                    <strong>Answer:</strong> {currentQuestion.answer}
+                                </Typography>
+                            </Alert>
+                        )}
+                    </CardContent>
+                </Card>
 
                 {(isBonus || isBonusQuestion) && (
-                    <div className="timer-controls text-center my-3">
-                        <div className="timer">{timeLeft}</div>
-                        <div className="btn-group">
-                            <button
-                                className="btn"
+                    <Box sx={{ textAlign: 'center', mb: 3 }}>
+                        <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+                            {timeLeft}
+                        </Typography>
+                        <Stack direction="row" spacing={1} justifyContent="center">
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<PlayArrowIcon />}
                                 onClick={startTimer}
                                 disabled={timerRunning}
                             >
                                 Start Timer
-                            </button>
-                            <button
-                                className="btn btn-secondary"
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<PauseIcon />}
                                 onClick={stopTimer}
                                 disabled={!timerRunning}
                             >
                                 Pause Timer
-                            </button>
-                            <button
-                                className="btn btn-secondary"
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={<RestartAltIcon />}
                                 onClick={resetTimer}
                             >
                                 Reset Timer
-                            </button>
-                        </div>
-                    </div>
+                            </Button>
+                        </Stack>
+                    </Box>
                 )}
 
-                <div className="row">
-                    <div className="col-12 mb-3">
-                        <div className="alert alert-info" role="alert">
-                            <i className="fa fa-info-circle mr-2"></i>
-                            Click directly on a player's name to select them for answering. Use "Skip Question" if no one answers.
-                        </div>
-                    </div>
+                <Alert severity="info" icon={<InfoIcon />} sx={{ mb: 3 }}>
+                    Click directly on a player's name to select them for answering. Use "Skip Question" if no one answers.
+                </Alert>
+
+                <Grid container spacing={3}>
                     {teams.map(team => (
-                        <div
+                        <Grid
+                            item
+                            xs={12}
+                            md={6}
                             key={team.id}
-                            className="col-md-6"
-                            style={{
-                                opacity:
-                                    (isBonusQuestion && eligibleTeam && team.id !== eligibleTeam.id) ? 0.5 : 1,
-                                pointerEvents:
-                                    (isBonusQuestion && eligibleTeam && team.id !== eligibleTeam.id) ? 'none' : 'auto'
+                            sx={{
+                                opacity: (isBonusQuestion && eligibleTeam && team.id !== eligibleTeam.id) ? 0.5 : 1,
+                                pointerEvents: (isBonusQuestion && eligibleTeam && team.id !== eligibleTeam.id) ? 'none' : 'auto'
                             }}
                         >
-                            <div
-                                className={`card team ${selectedTeam?.id === team.id ? 'border-primary' : ''}`}
+                            <Card
+                                variant="outlined"
+                                sx={{
+                                    cursor: 'pointer',
+                                    borderColor: selectedTeam?.id === team.id ? 'primary.main' : 'divider',
+                                    borderWidth: selectedTeam?.id === team.id ? 2 : 1,
+                                    '&:hover': {
+                                        borderColor: 'primary.main',
+                                    }
+                                }}
                                 onClick={() => handleTeamSelect(team)}
-                                style={{ cursor: 'pointer' }}
                             >
-                                <div className="card-header team-header">
-                                    <h4>{team.name}</h4>
-                                    <h4>Score: {team.score}</h4>
-                                </div>
-                                <div className="card-body">
-                                    <h5>Click on a player to select:</h5>
-                                    <div className="player-list">
+                                <CardHeader
+                                    title={
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Typography variant="h6">{team.name}</Typography>
+                                            <Typography variant="h6">Score: {team.score}</Typography>
+                                        </Box>
+                                    }
+                                />
+                                <Divider />
+                                <CardContent>
+                                    <Typography variant="subtitle1" gutterBottom>
+                                        Click on a player to select:
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                                         {team.players.map(player => (
-                                            <div
+                                            <Card
                                                 key={player.id}
-                                                className={`player-card ${selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? 'selected' : ''}`}
+                                                variant="outlined"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handlePlayerSelect(team, player);
                                                 }}
-                                                style={{
+                                                sx={{
                                                     cursor: 'pointer',
-                                                    padding: '10px',
-                                                    margin: '5px 0',
-                                                    border: '1px solid #ddd',
-                                                    borderRadius: '5px',
-                                                    backgroundColor: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '#e6f7ff' : '#fff',
+                                                    p: 1.5,
+                                                    minWidth: 120,
+                                                    flex: '1 0 120px',
+                                                    backgroundColor: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? 'primary.lighter' : 'background.paper',
+                                                    borderColor: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? 'primary.main' : 'divider',
+                                                    boxShadow: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? 2 : 0,
                                                     transition: 'all 0.2s ease',
-                                                    boxShadow: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '0 0 5px rgba(0,123,255,0.5)' : 'none'
+                                                    '&:hover': {
+                                                        backgroundColor: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? 'primary.lighter' : 'action.hover',
+                                                    }
                                                 }}
-                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '#e6f7ff' : '#f8f9fa'}
-                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '#e6f7ff' : '#fff'}
                                             >
-                                                <div><strong>{player.name}</strong></div>
-                                                <div>Points: {player.score}</div>
-                                            </div>
+                                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                                                    {player.name}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    Points: {player.score}
+                                                </Typography>
+                                            </Card>
                                         ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
-                </div>
+                </Grid>
 
-                <div className="controls mt-4 d-flex justify-content-between">
-                    <div>
-                        <button
-                            className="btn"
-                            onClick={() => setShowAnswer(!showAnswer)}
-                        >
-                            {showAnswer ? 'Hide Answer' : 'Show Answer'}
-                        </button>
-                    </div>
+                <Box sx={{
+                    mt: 4,
+                    pt: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid',
+                    borderColor: 'divider'
+                }}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={showAnswer ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        onClick={() => setShowAnswer(!showAnswer)}
+                    >
+                        {showAnswer ? 'Hide Answer' : 'Show Answer'}
+                    </Button>
 
-                    <div>
+                    <Box>
                         {selectedTeam && selectedPlayer && !answered && (
-                            <>
-                                <button
-                                    className="btn"
+                            <Stack direction="row" spacing={1}>
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    startIcon={<CheckCircleIcon />}
                                     onClick={handleCorrectAnswer}
                                 >
                                     Correct (+5)
-                                </button>
-                                <button
-                                    className="btn btn-secondary"
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    startIcon={<CancelIcon />}
                                     onClick={handleIncorrectAnswer}
                                 >
                                     Incorrect {isLightningQuestion ? '(-5)' : '(0)'}
-                                </button>
-                            </>
+                                </Button>
+                            </Stack>
                         )}
-                    </div>
+                    </Box>
 
-                    <div>
+                    <Box>
                         {(currentQuestionIndex < questions.length - 1) ? (
-                            <button
-                                className="btn"
+                            <Button
+                                variant="contained"
+                                color="primary"
                                 onClick={handleNextQuestion}
                                 disabled={!answered && !isBonus && !isLightning}
                             >
                                 Next Question
-                            </button>
+                            </Button>
                         ) : (
-                            <button
-                                className="btn"
+                            <Button
+                                variant="contained"
+                                color="primary"
                                 onClick={handleFinishQuiz}
                             >
                                 Finish Quiz
-                            </button>
+                            </Button>
                         )}
 
                         {/* Add Skip button for questions no one answers */}
                         {!answered && !isBonus && !isLightning && (
-                            <button
-                                className="btn btn-outline-secondary ml-2"
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={<SkipNextIcon />}
                                 onClick={handleSkipQuestion}
-                                style={{ marginLeft: '10px' }}
+                                sx={{ ml: 1 }}
                             >
                                 Skip Question
-                            </button>
+                            </Button>
                         )}
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </Box>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 

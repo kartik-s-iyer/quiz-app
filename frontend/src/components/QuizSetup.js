@@ -1,6 +1,30 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuizContext from '../contexts/QuizContext';
+import {
+    Container,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    Grid,
+    Box,
+    Alert,
+    List,
+    ListItem,
+    ListItemText,
+    Divider
+} from '@mui/material';
+import { styled } from '@mui/system';
+
+const CodeBlock = styled('pre')(({ theme }) => ({
+    backgroundColor: '#f5f5f5',
+    padding: '16px',
+    borderRadius: '4px',
+    overflow: 'auto',
+    fontSize: '14px',
+    border: '1px solid #e0e0e0'
+}));
 
 const QuizSetup = () => {
     const navigate = useNavigate();
@@ -53,64 +77,82 @@ const QuizSetup = () => {
     };
 
     return (
-        <div className="container">
-            <div className="card">
-                <h1 className="text-center">Quiz Master Setup</h1>
+        <Container maxWidth="md" sx={{ py: 4 }}>
+            <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+                <Typography variant="h4" component="h1" align="center" gutterBottom>
+                    Quiz Master Setup
+                </Typography>
 
-                <form onSubmit={handleFileSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="filePath">JSON File Path:</label>
-                        <input
-                            type="text"
-                            id="filePath"
-                            value={filePath}
-                            onChange={(e) => setFilePath(e.target.value)}
-                            className="form-control"
-                            placeholder="Enter path to your quiz JSON file"
-                        />
-                        <small className="form-text text-muted">
-                            Enter the path to your JSON quiz file or use the sample data option below.
-                            <br />
+                <Box component="form" onSubmit={handleFileSubmit} sx={{ mt: 3 }}>
+                    <TextField
+                        fullWidth
+                        id="filePath"
+                        label="JSON File Path"
+                        value={filePath}
+                        onChange={(e) => setFilePath(e.target.value)}
+                        margin="normal"
+                        helperText="Enter the path to your JSON quiz file or use the sample data option below."
+                        variant="outlined"
+                    />
+
+                    <Box sx={{ mt: 1, mb: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
                             <strong>Tip:</strong> Create a folder called "quiz_files" in the backend directory and place your JSON file there.
-                            <br />
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                             <strong>Example paths:</strong>
-                            <ul>
-                                <li>./backend/quiz_files/my_quiz.json</li>
-                                <li>/absolute/path/to/your/quiz_file.json</li>
-                            </ul>
-                        </small>
-                    </div>
+                        </Typography>
+                        <List dense sx={{ pl: 2 }}>
+                            <ListItem sx={{ py: 0 }}>
+                                <ListItemText primary="./backend/quiz_files/my_quiz.json" />
+                            </ListItem>
+                            <ListItem sx={{ py: 0 }}>
+                                <ListItemText primary="/absolute/path/to/your/quiz_file.json" />
+                            </ListItem>
+                        </List>
+                    </Box>
 
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    {loadError && <div className="alert alert-danger">{loadError}</div>}
+                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+                    {loadError && <Alert severity="error" sx={{ mb: 2 }}>{loadError}</Alert>}
 
-                    <div className="d-flex justify-content-between mt-4">
-                        <button
-                            type="submit"
-                            className="btn"
-                            disabled={loading}
-                        >
-                            {loading ? 'Loading...' : 'Load Questions'}
-                        </button>
+                    <Grid container spacing={2} sx={{ mt: 2 }}>
+                        <Grid item xs={12} sm={6}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                disabled={loading}
+                            >
+                                {loading ? 'Loading...' : 'Load Questions'}
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Button
+                                type="button"
+                                variant="outlined"
+                                color="secondary"
+                                fullWidth
+                                onClick={handleSampleDataClick}
+                                disabled={loading}
+                            >
+                                Use Sample Data
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
 
-                        <button
-                            type="button"
-                            onClick={handleSampleDataClick}
-                            className="btn btn-secondary"
-                            disabled={loading}
-                        >
-                            Use Sample Data
-                        </button>
-                    </div>
-                </form>
+                <Alert severity="info" sx={{ mt: 3 }}>
+                    <Typography variant="body2">
+                        <strong>Note:</strong> We've created a sample quiz file for you at <code>backend/quiz_files/my_quiz.json</code> that you can use or modify.
+                    </Typography>
+                </Alert>
 
-                <div className="alert alert-info mt-3">
-                    <strong>Note:</strong> We've created a sample quiz file for you at <code>backend/quiz_files/my_quiz.json</code> that you can use or modify.
-                </div>
-
-                <div className="mt-4">
-                    <h3>JSON Format Example:</h3>
-                    <pre className="bg-light p-3 border rounded">
+                <Box sx={{ mt: 4 }}>
+                    <Typography variant="h6" gutterBottom>
+                        JSON Format Example:
+                    </Typography>
+                    <CodeBlock>
                         {`{
   "questions": [
     {
@@ -152,10 +194,10 @@ const QuizSetup = () => {
     // More lightning questions...
   ]
 }`}
-                    </pre>
-                </div>
-            </div>
-        </div>
+                    </CodeBlock>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 

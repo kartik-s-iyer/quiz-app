@@ -1,6 +1,27 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuizContext from '../contexts/QuizContext';
+import {
+    Container,
+    Paper,
+    Typography,
+    Button,
+    Grid,
+    Box,
+    Card,
+    CardContent,
+    CardHeader,
+    Divider,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    CircularProgress,
+    Stack
+} from '@mui/material';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const QuizStats = () => {
     const navigate = useNavigate();
@@ -50,112 +71,213 @@ const QuizStats = () => {
     };
 
     if (loading) {
-        return <div className="container"><div className="card text-center">Loading stats...</div></div>;
+        return (
+            <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ p: 4 }}>
+                    <CircularProgress sx={{ mb: 2 }} />
+                    <Typography variant="h5">Loading stats...</Typography>
+                </Paper>
+            </Container>
+        );
     }
 
     if (!teamStats.length) {
-        return <div className="container"><div className="card text-center">No stats available</div></div>;
+        return (
+            <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ p: 4 }}>
+                    <Typography variant="h5">No stats available</Typography>
+                </Paper>
+            </Container>
+        );
     }
 
     return (
-        <div className="container">
-            <div className="card mb-4">
-                <h1 className="text-center">Quiz Results</h1>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Paper elevation={3} sx={{ p: 4 }}>
+                <Typography variant="h3" component="h1" align="center" gutterBottom>
+                    Quiz Results
+                </Typography>
 
                 {isWinner ? (
-                    <div className="text-center mb-4">
-                        <h2 className="winner">🏆 Winner: {winner.name} 🏆</h2>
-                        <h3>Score: {winner.score} points</h3>
-                    </div>
+                    <Box sx={{ textAlign: 'center', mb: 4 }}>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            mb: 1
+                        }}>
+                            <EmojiEventsIcon
+                                color="warning"
+                                sx={{ fontSize: 40, mr: 1 }}
+                            />
+                            <Typography variant="h4" component="h2" color="primary">
+                                Winner: {winner.name}
+                            </Typography>
+                            <EmojiEventsIcon
+                                color="warning"
+                                sx={{ fontSize: 40, ml: 1 }}
+                            />
+                        </Box>
+                        <Typography variant="h5">
+                            Score: {winner.score} points
+                        </Typography>
+                    </Box>
                 ) : (
-                    <div className="text-center mb-4">
-                        <h2>It's a Tie!</h2>
-                        <h3>Both teams scored {sortedTeams[0].score} points</h3>
-                    </div>
+                    <Box sx={{ textAlign: 'center', mb: 4 }}>
+                        <Typography variant="h4" component="h2">
+                            It's a Tie!
+                        </Typography>
+                        <Typography variant="h5">
+                            Both teams scored {sortedTeams[0].score} points
+                        </Typography>
+                    </Box>
                 )}
 
-                <div className="stats-container">
+                <Grid container spacing={4}>
                     {teamStats.map(team => (
-                        <div key={team.id} className="card mb-4">
-                            <div className="card-header team-header">
-                                <h3>{team.name}</h3>
-                                <h3>Score: {team.score}</h3>
-                            </div>
-                            <div className="card-body">
-                                <h4>Team Statistics</h4>
-                                <table className="table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Total Questions Answered:</td>
-                                            <td>{team.stats.totalAnswered || team.stats.total_answered || 0}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Correct Answers:</td>
-                                            <td>{team.stats.correctAnswers || team.stats.correct_answers || 0}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Accuracy:</td>
-                                            <td>{(team.stats.accuracy || 0).toFixed(1)}%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Normal Round Points:</td>
-                                            <td>{team.stats.normalPoints || team.stats.normal_points || 0}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bonus Round Points:</td>
-                                            <td>{team.stats.bonusPoints || team.stats.bonus_points || 0}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Lightning Round Points:</td>
-                                            <td>{team.stats.lightningPoints || team.stats.lightning_points || 0}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <Grid item xs={12} key={team.id}>
+                            <Card variant="outlined">
+                                <CardHeader
+                                    title={
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Typography variant="h5">{team.name}</Typography>
+                                            <Typography variant="h5">Score: {team.score}</Typography>
+                                        </Box>
+                                    }
+                                    sx={{ bgcolor: 'background.paper' }}
+                                />
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        Team Statistics
+                                    </Typography>
 
-                                <h4 className="mt-4">Player Statistics</h4>
-                                <div className="stats-container">
-                                    {team.players.map(player => (
-                                        <div key={player.id} className="card">
-                                            <div className="card-header">
-                                                <h5>{player.name}</h5>
-                                                <h5>Score: {player.score}</h5>
-                                            </div>
-                                            <div className="card-body">
-                                                <table className="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Questions Answered:</td>
-                                                            <td>{player.stats?.totalAnswered || player.stats?.total_answered || 0}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Correct Answers:</td>
-                                                            <td>{player.stats?.correctAnswers || player.stats?.correct_answers || 0}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Accuracy:</td>
-                                                            <td>{(player.stats?.accuracy || 0).toFixed(1)}%</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                                    <TableContainer component={Paper} variant="outlined" sx={{ mb: 4 }}>
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                        Total Questions Answered:
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {team.stats.totalAnswered || team.stats.total_answered || 0}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                        Correct Answers:
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {team.stats.correctAnswers || team.stats.correct_answers || 0}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                        Accuracy:
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {(team.stats.accuracy || 0).toFixed(1)}%
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                        Normal Round Points:
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {team.stats.normalPoints || team.stats.normal_points || 0}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                        Bonus Round Points:
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {team.stats.bonusPoints || team.stats.bonus_points || 0}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                        Lightning Round Points:
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {team.stats.lightningPoints || team.stats.lightning_points || 0}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+
+                                    <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+                                        Player Statistics
+                                    </Typography>
+
+                                    <Grid container spacing={3}>
+                                        {team.players.map(player => (
+                                            <Grid item xs={12} sm={6} md={4} key={player.id}>
+                                                <Card variant="outlined">
+                                                    <CardHeader
+                                                        title={
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                <Typography variant="subtitle1">{player.name}</Typography>
+                                                                <Typography variant="subtitle1">Score: {player.score}</Typography>
+                                                            </Box>
+                                                        }
+                                                        sx={{ bgcolor: 'background.paper' }}
+                                                    />
+                                                    <CardContent>
+                                                        <TableContainer>
+                                                            <Table size="small">
+                                                                <TableBody>
+                                                                    <TableRow>
+                                                                        <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                                            Questions Answered:
+                                                                        </TableCell>
+                                                                        <TableCell align="right">
+                                                                            {player.stats?.totalAnswered || player.stats?.total_answered || 0}
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                    <TableRow>
+                                                                        <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                                            Correct Answers:
+                                                                        </TableCell>
+                                                                        <TableCell align="right">
+                                                                            {player.stats?.correctAnswers || player.stats?.correct_answers || 0}
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                    <TableRow>
+                                                                        <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                                                            Accuracy:
+                                                                        </TableCell>
+                                                                        <TableCell align="right">
+                                                                            {(player.stats?.accuracy || 0).toFixed(1)}%
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                </TableBody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                    </CardContent>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
-                </div>
+                </Grid>
 
-                <div className="text-center mt-4">
-                    <button
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        startIcon={<RestartAltIcon />}
                         onClick={handleNewQuiz}
-                        className="btn btn-lg"
                     >
                         Start New Quiz
-                    </button>
-                </div>
-            </div>
-        </div>
+                    </Button>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 

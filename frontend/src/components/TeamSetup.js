@@ -1,6 +1,30 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuizContext from '../contexts/QuizContext';
+import {
+    Container,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    Grid,
+    Box,
+    Alert,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction,
+    IconButton,
+    Card,
+    CardHeader,
+    CardContent,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Divider
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const TeamSetup = () => {
     const navigate = useNavigate();
@@ -53,108 +77,137 @@ const TeamSetup = () => {
     };
 
     return (
-        <div className="container">
-            <div className="card">
-                <h1 className="text-center">Team Setup</h1>
+        <Container maxWidth="md" sx={{ py: 4 }}>
+            <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+                <Typography variant="h4" component="h1" align="center" gutterBottom>
+                    Team Setup
+                </Typography>
 
                 {error && (
-                    <div className="alert alert-danger">
-                        {error}
-                        <div className="mt-2">
-                            <button
-                                className="btn btn-outline-danger"
+                    <Alert
+                        severity="error"
+                        sx={{ mb: 3 }}
+                        action={
+                            <Button
+                                color="inherit"
+                                size="small"
                                 onClick={() => navigate('/')}
                             >
                                 Return to Setup
-                            </button>
-                        </div>
-                    </div>
+                            </Button>
+                        }
+                    >
+                        {error}
+                    </Alert>
                 )}
 
-                <div className="row">
+                <Grid container spacing={3}>
                     {teams.map(team => (
-                        <div key={team.id} className="col-md-6 team">
-                            <div className="card">
-                                <div className="card-header team-header">
-                                    <input
-                                        type="text"
-                                        value={team.name}
-                                        onChange={(e) => handleTeamNameChange(team.id, e.target.value)}
-                                        className="form-control"
-                                    />
-                                </div>
+                        <Grid item xs={12} md={6} key={team.id}>
+                            <Card variant="outlined">
+                                <CardHeader
+                                    title={
+                                        <TextField
+                                            fullWidth
+                                            value={team.name}
+                                            onChange={(e) => handleTeamNameChange(team.id, e.target.value)}
+                                            variant="outlined"
+                                            size="small"
+                                        />
+                                    }
+                                />
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        Players:
+                                    </Typography>
 
-                                <div className="card-body">
-                                    <h5>Players:</h5>
                                     {team.players.length === 0 ? (
-                                        <p>No players added yet</p>
+                                        <Typography color="text.secondary">
+                                            No players added yet
+                                        </Typography>
                                     ) : (
-                                        <ul className="list-group">
+                                        <List>
                                             {team.players.map(player => (
-                                                <li key={player.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                                    {player.name}
-                                                    <button
-                                                        onClick={() => removePlayer(team.id, player.id)}
-                                                        className="btn btn-sm btn-danger"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </li>
+                                                <ListItem key={player.id}>
+                                                    <ListItemText primary={player.name} />
+                                                    <ListItemSecondaryAction>
+                                                        <IconButton
+                                                            edge="end"
+                                                            aria-label="delete"
+                                                            onClick={() => removePlayer(team.id, player.id)}
+                                                            color="error"
+                                                            size="small"
+                                                        >
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </ListItemSecondaryAction>
+                                                </ListItem>
                                             ))}
-                                        </ul>
+                                        </List>
                                     )}
-                                </div>
-                            </div>
-                        </div>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
-                </div>
+                </Grid>
 
-                <div className="mt-4">
-                    <form onSubmit={handleAddPlayer}>
-                        <div className="row">
-                            <div className="col-md-4">
-                                <select
+                <Box component="form" onSubmit={handleAddPlayer} sx={{ mt: 4 }}>
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item xs={12} md={4}>
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel id="team-select-label">Team</InputLabel>
+                                <Select
+                                    labelId="team-select-label"
+                                    id="team-select"
                                     value={newPlayer.teamId}
-                                    onChange={(e) => setNewPlayer({ ...newPlayer, teamId: parseInt(e.target.value) })}
-                                    className="form-control"
+                                    onChange={(e) => setNewPlayer({ ...newPlayer, teamId: e.target.value })}
+                                    label="Team"
                                 >
                                     {teams.map(team => (
-                                        <option key={team.id} value={team.id}>
+                                        <MenuItem key={team.id} value={team.id}>
                                             {team.name}
-                                        </option>
+                                        </MenuItem>
                                     ))}
-                                </select>
-                            </div>
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                            <div className="col-md-6">
-                                <input
-                                    type="text"
-                                    value={newPlayer.name}
-                                    onChange={(e) => setNewPlayer({ ...newPlayer, name: e.target.value })}
-                                    placeholder="Enter player name"
-                                    className="form-control"
-                                />
-                            </div>
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                fullWidth
+                                id="player-name"
+                                label="Player Name"
+                                value={newPlayer.name}
+                                onChange={(e) => setNewPlayer({ ...newPlayer, name: e.target.value })}
+                                variant="outlined"
+                            />
+                        </Grid>
 
-                            <div className="col-md-2">
-                                <button type="submit" className="btn">
-                                    Add Player
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        <Grid item xs={12} md={2}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                            >
+                                Add Player
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
 
-                <div className="text-center mt-4">
-                    <button
+                <Box sx={{ mt: 4, textAlign: 'center' }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
                         onClick={handleStartQuiz}
-                        className="btn btn-lg"
                     >
                         Start Quiz
-                    </button>
-                </div>
-            </div>
-        </div>
+                    </Button>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 

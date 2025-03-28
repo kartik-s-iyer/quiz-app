@@ -28,6 +28,9 @@ const QuizRunner = () => {
     // Check if we have questions loaded, if not load sample questions
     useEffect(() => {
         const loadSampleIfNeeded = async () => {
+            console.log("QuizRunner Effect - Current questions state:", questions);
+            console.log("QuizRunner Effect - Current index:", currentQuestionIndex);
+
             if (!loadingAttempted && (!questions || questions.length === 0)) {
                 setLoadingAttempted(true);
                 setIsLoading(true);
@@ -38,8 +41,9 @@ const QuizRunner = () => {
 
                     // Give it a moment to update the state
                     setTimeout(() => {
+                        console.log("After timeout - Current questions:", questions);
                         setIsLoading(false);
-                    }, 500);
+                    }, 1000); // Increased timeout to ensure state updates
                 } catch (err) {
                     console.error("Failed to load sample questions in QuizRunner:", err);
                     setError("Failed to load sample questions. Try returning to the setup page.");
@@ -86,17 +90,26 @@ const QuizRunner = () => {
     // Find which team is allowed to answer the bonus (if this is a bonus question)
     const eligibleTeam = bonusTeamId ? teams.find(team => team.id === bonusTeamId) : null;
 
-    // Get current question safely
+    // Get current question safely with debugging
+    console.log("About to calculate currentQuestion:");
+    console.log(" - questions array:", questions);
+    console.log(" - questions length:", questions ? questions.length : 0);
+    console.log(" - currentQuestionIndex:", currentQuestionIndex);
+
     const currentQuestion = questions && questions.length > 0 && currentQuestionIndex < questions.length
         ? questions[currentQuestionIndex]
         : null;
+
+    console.log("Calculated currentQuestion:", currentQuestion);
 
     const handleTeamSelect = (team) => {
         setSelectedTeam(team);
         setSelectedPlayer(null);
     };
 
-    const handlePlayerSelect = (player) => {
+    const handlePlayerSelect = (team, player) => {
+        // When a player is clicked, select both the team and player
+        setSelectedTeam(team);
         setSelectedPlayer(player);
     };
 
@@ -141,6 +154,11 @@ const QuizRunner = () => {
         setSelectedPlayer(null);
         setAnswered(false);
         resetTimer();
+    };
+
+    const handleSkipQuestion = () => {
+        // Mark as answered without recording any points
+        setAnswered(true);
     };
 
     const handleFinishQuiz = () => {
@@ -250,6 +268,12 @@ const QuizRunner = () => {
                 )}
 
                 <div className="row">
+                    <div className="col-12 mb-3">
+                        <div className="alert alert-info" role="alert">
+                            <i className="fa fa-info-circle mr-2"></i>
+                            Click directly on a player's name to select them for answering. Use "Skip Question" if no one answers.
+                        </div>
+                    </div>
                     {teams.map(team => (
                         <div
                             key={team.id}
@@ -271,7 +295,7 @@ const QuizRunner = () => {
                                     <h4>Score: {team.score}</h4>
                                 </div>
                                 <div className="card-body">
-                                    <h5>Select Player:</h5>
+                                    <h5>Click on a player to select:</h5>
                                     <div className="player-list">
                                         {team.players.map(player => (
                                             <div
@@ -279,10 +303,22 @@ const QuizRunner = () => {
                                                 className={`player-card ${selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? 'selected' : ''}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handlePlayerSelect(player);
+                                                    handlePlayerSelect(team, player);
                                                 }}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    padding: '10px',
+                                                    margin: '5px 0',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '5px',
+                                                    backgroundColor: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '#e6f7ff' : '#fff',
+                                                    transition: 'all 0.2s ease',
+                                                    boxShadow: selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '0 0 5px rgba(0,123,255,0.5)' : 'none'
+                                                }}
+                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '#e6f7ff' : '#f8f9fa'}
+                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = selectedPlayer?.id === player.id && selectedTeam?.id === team.id ? '#e6f7ff' : '#fff'}
                                             >
-                                                <div>{player.name}</div>
+                                                <div><strong>{player.name}</strong></div>
                                                 <div>Points: {player.score}</div>
                                             </div>
                                         ))}
@@ -339,6 +375,17 @@ const QuizRunner = () => {
                                 Finish Quiz
                             </button>
                         )}
+
+                        {/* Add Skip button for questions no one answers */}
+                        {!answered && !isBonus && !isLightning && (
+                            <button
+                                className="btn btn-outline-secondary ml-2"
+                                onClick={handleSkipQuestion}
+                                style={{ marginLeft: '10px' }}
+                            >
+                                Skip Question
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -346,4 +393,4 @@ const QuizRunner = () => {
     );
 };
 
-export default QuizRunner; 
+export default QuizRunner;

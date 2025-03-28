@@ -5,7 +5,9 @@ import QuizContext from '../contexts/QuizContext';
 const QuizSetup = () => {
     const navigate = useNavigate();
     const { loadQuestions, isLoaded, loadError } = useContext(QuizContext);
-    const [filePath, setFilePath] = useState('');
+
+    // Set a default path that uses an absolute path which might work better with the backend
+    const [filePath, setFilePath] = useState('/Users/iyerkartikshridhar/Desktop/quiz-app/backend/quiz_files/my_quiz.json');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -68,6 +70,14 @@ const QuizSetup = () => {
                         />
                         <small className="form-text text-muted">
                             Enter the path to your JSON quiz file or use the sample data option below.
+                            <br />
+                            <strong>Tip:</strong> Create a folder called "quiz_files" in the backend directory and place your JSON file there.
+                            <br />
+                            <strong>Example paths:</strong>
+                            <ul>
+                                <li>./backend/quiz_files/my_quiz.json</li>
+                                <li>/absolute/path/to/your/quiz_file.json</li>
+                            </ul>
                         </small>
                     </div>
 
@@ -93,6 +103,10 @@ const QuizSetup = () => {
                         </button>
                     </div>
                 </form>
+
+                <div className="alert alert-info mt-3">
+                    <strong>Note:</strong> We've created a sample quiz file for you at <code>backend/quiz_files/my_quiz.json</code> that you can use or modify.
+                </div>
 
                 <div className="mt-4">
                     <h3>JSON Format Example:</h3>

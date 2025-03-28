@@ -65,17 +65,16 @@ export const QuizProvider = ({ children }) => {
             const data = response.data;
             console.log("Received quiz state:", data);
 
+            // If we have questions from the quiz state and they're not empty, use them
+            if (data.questions && data.questions.length > 0) {
+                console.log("Setting questions from backend:", data.questions.length);
+                setQuestions(data.questions);
+            }
+
             setCurrentQuestionIndex(data.current_question_index);
             setCurrentRound(data.current_round);
             setBonusTeamId(data.bonus_team_id);
             setTeams(data.teams);
-
-            // Make sure we have questions loaded
-            if (data.current_question && (!questions || questions.length === 0)) {
-                console.log("Setting questions from quiz state");
-                // Only set questions if we don't already have them
-                setQuestions(data.questions || []);
-            }
         } catch (error) {
             console.error('Error fetching quiz state:', error);
         }

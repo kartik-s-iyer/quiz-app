@@ -1,0 +1,74 @@
+{
+    "questions": [
+        {
+            "id": 1,
+            "text": "What is the capital of France?",
+            "answer": "Paris",
+            "type": "normal"
+        },
+        {
+            "id": 2,
+            "text": "Who painted the Mona Lisa?",
+            "answer": "Leonardo da Vinci",
+            "type": "normal"
+        },
+        {
+            "id": 3,
+            "text": "What is the largest planet in our solar system?",
+            "answer": "Jupiter",
+            "type": "normal"
+        },
+        {
+            "id": 4,
+            "text": "BONUS THEME: Astronomy",
+            "type": "bonus_theme"
+        },
+        {
+            "id": 5,
+            "text": "What is the closest planet to the Sun?",
+            "answer": "Mercury",
+            "type": "bonus"
+        },
+        {
+            "id": 6,
+            "text": "What is the name of our galaxy?",
+            "answer": "Milky Way",
+            "type": "bonus"
+        },
+        {
+            "id": 7,
+            "text": "What is the largest moon in our solar system?",
+            "answer": "Ganymede",
+            "type": "bonus"
+        },
+        {
+            "id": 8,
+            "text": "What is the smallest planet in our solar system?",
+            "answer": "Mercury",
+            "type": "bonus"
+        },
+        {
+            "id": 9,
+            "text": "LIGHTNING ROUND: World Capitals",
+            "type": "lightning_theme"
+        },
+        {
+            "id": 10,
+            "text": "Capital of Japan?",
+            "answer": "Tokyo",
+            "type": "lightning"
+        },
+        {
+            "id": 11,
+            "text": "Capital of Italy?",
+            "answer": "Rome",
+            "type": "lightning"
+        },
+        {
+            "id": 12,
+            "text": "Capital of Australia?",
+            "answer": "Canberra",
+            "type": "lightning"
+        }
+    ]
+}
